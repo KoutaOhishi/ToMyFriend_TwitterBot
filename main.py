@@ -55,10 +55,19 @@ def web():
             #        file.write(chunk)
 
             #2020.3.27 スクリーンショットを取ることで対応
-            driver.save_screenshot(FILENAME)
-            screen_shot = Image.open(FILENAME)
-            crop_img = screen_shot.crop((255, 282, 644, 473)) #(left, upper, right, lower)
-            crop_img.save(FILENAME, quality=100)
+            #driver.save_screenshot(FILENAME)
+            #screen_shot = Image.open(FILENAME)
+            #crop_img = screen_shot.crop((255, 282, 644, 473)) #(left, upper, right, lower)
+            #crop_img.save(FILENAME, quality=100)
+            
+            #2020.10.16 オリジナルのURLを取得する方法に変更
+            type_d_main = driver.find_element_by_class_name("type_d_main")
+            img_tag = type_d_main.find_element_by_tag_name("img")
+            img_url = img_tag.get_attribute("src")
+            response = requests.get(img_url, stream=True)
+            with open(FILENAME, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=1024):
+                    file.write(chunk)
 
             print "close Google Chrome"
 
